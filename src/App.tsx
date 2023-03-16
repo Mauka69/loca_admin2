@@ -6,23 +6,25 @@ import { darkTheme } from './app/config/theme';
 import store from './app/store/store';
 import './styles/style.scss';
 import { Layout } from './ui';
-import CreateEventPage from "./pages/CreateEventPage";
-
+import CreateBusinessPage from './pages/CreateCountryPage';
+import CreateEventPage from './pages/CreateEventPage';
+import CreateNewTags from './pages/CreateNewTags';
 
 export default function App() {
 	return (
 		<Provider store={store}>
 			<ThemeProvider theme={darkTheme}>
-				<Layout>
-					<BrowserRouter>
+				<BrowserRouter>
+					<Layout>
 						<Router />
 						<Routes>
-							<Route path="/" element={<CreateEventPage/>}/>
+							<Route path="/" element={<CreateEventPage />} />
+							<Route path="/createCountry" element={<CreateBusinessPage />} />
+							<Route path="/createNewTags" element={<CreateNewTags />} />
 						</Routes>
-					</BrowserRouter>
-				</Layout>
+					</Layout>
+				</BrowserRouter>
 			</ThemeProvider>
 		</Provider>
-
 	);
 }

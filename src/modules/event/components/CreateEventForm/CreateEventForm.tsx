@@ -1,44 +1,57 @@
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { Tag } from '../../../../common/interfaces';
-import { Button, Card, Form, Input, Select } from '../../../../ui';
+import { Select, Button, Card, Form, Input } from '../../../../ui';
+import { useGetBusinessCardsQuery } from '../../../business';
 import { useEventTagsQuery } from '../../../tag';
-import { useCreateEventMutation } from '../../api/event.api';	
-
-const mockedTags: Tag[] = [
-	{ id: '1', name: 'Тег 1' },
-	{ id: '2', name: 'Тег 2' },
-	{ id: '3', name: 'Тег 3' },
-
-];
+import { useCreateEventMutation } from '../../api/event.api';
 
 export default function CreateEventForm() {
 	const formProps = useForm();
 	const [createEvent, { isLoading: creating }] = useCreateEventMutation();
-	const { data: tags = mockedTags, isLoading } = useEventTagsQuery();
+	const { data: tags, isLoading } = useEventTagsQuery();
+	const { data: businessCards } = useGetBusinessCardsQuery();
 
 	const tagsOptions = useMemo(
 		() =>
-			tags.map((v) => ({
+			tags?.map((v) => ({
 				label: v.name,
 				value: v.id,
-			})),
+			})) || [],
 		[tags],
 	);
-
+	const businessOption = useMemo(
+		() =>
+			businessCards?.map((v) => ({
+				label: v.name,
+				value: v.id,
+			})) || [],
+		[businessCards],
+	);
 	if (isLoading) {
 		return <p>Загрузка...</p>;
 	}
 
 	return (
 		<Card padding={1.5}>
-			<Form formProps={formProps} onSubmit={formProps.handleSubmit(createEvent as any)}>
+			<Form
+				formProps={formProps}
+				onSubmit={formProps.handleSubmit((data) => {
+					if (!data.time_start || !data.time_end) {
+						data.time_start = null;
+						data.time_end = null;
+					}
+					createEvent(data as any);
+				})}
+			>
 				<Input label="Название" name="name" required />
 				<Input label="Описание" name="description" required />
-				<Input label="Дата начала" name="date_start" required shrink type="date" />
-				<Input label="Дата окончания" name="date_end" required shrink type="date" />
-				<Input label="Время начала" name="time_start" required shrink type="time" />
-				<Input label="Время окончания" name="time_end" required shrink type="time" />
+				<Input label="Дата начала" name="start" required shrink type="date" />
+				<Input label="Время начала" name="time_start" shrink type="time" step="1" />
+				<Input label="Дата окончания" name="end" required shrink type="date" />
+				<Input label="Время окончания" name="time_end" type="time" step="1" />
+
+				<Select defaultValue={[]} name="business" options={businessOption} searchable />
+				<br />
 				<Select defaultValue={[]} multiple name="tags" options={tagsOptions} />
 				<Button loading={creating} type="submit">
 					Отправить

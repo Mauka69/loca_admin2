@@ -8,15 +8,19 @@ const eventApi = api.injectEndpoints({
 			query: (
 				body: Pick<
 					Event,
-					'business' | 'date_end' | 'date_start' | 'description' | 'name' | 'tags' | 'time_end' | 'time_start'
+					'business' | 'end' | 'start' | 'description' | 'name' | 'tags' | 'time_end' | 'time_start' | 'tags'
 				>,
 			) => ({
 				body,
 				method: 'POST',
-				url: 'event/event',
+				url: 'event/event/',
 			}),
+		}),
+		eventAll: build.query<Event[], void>({
+			providesTags: ['Event'],
+			query: () => '/event/event/all/',
 		}),
 	}),
 });
 
-export const { useCreateEventMutation } = eventApi;
+export const { useCreateEventMutation, useEventAllQuery } = eventApi;
