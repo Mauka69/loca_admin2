@@ -1,6 +1,7 @@
-import { MenuItem } from "react-pro-sidebar";
-import { Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import {MenuItem} from "react-pro-sidebar";
+import {Typography, useTheme} from "@mui/material";
+import {Link} from "react-router-dom";
+import {tokens} from "../Theme/theme";
 
 interface ItemProps {
     title: string;
@@ -10,16 +11,18 @@ interface ItemProps {
     setSelected: Function;
 }
 
-export default function ItemSide({title, to, icon, selected, setSelected}: ItemProps) {
+export default function Item({title, to, icon, selected, setSelected}: ItemProps) {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
     return (
         <MenuItem
             active={selected === title}
-            style={{ color: "var(--bg-color-primary)" }}
+            style={{color: colors.grey[100]}}
             onClick={() => setSelected(title)}
             icon={icon}
         >
-            <Typography>{title}</Typography>
-            <Link to={to} />
+            <Typography variant ="10px">{title}</Typography>
+            <Link to={to}/>
         </MenuItem>
     );
 }
